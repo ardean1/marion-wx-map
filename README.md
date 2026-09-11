@@ -10,6 +10,8 @@
 
 # Marion Wx Map
 
+<p align="center"><img src="docs/logo.png" alt="Marion Wx Map logo" width="220"></p>
+
 **Free for everyone to use.** Optional donations help cover Ardean’s costs (hosting, time, tools) — this is not a paid product and not a commercial weather service.
 
 Live map for **Marion, VA / Smyth County**: NEXRAD radar, NWS storm cells with real motion, Blitzortung lightning, and ADS-B aircraft. No Raspberry Pi, no RTL-SDR, no FlightRadar24 / FlightAware scraping.
@@ -113,6 +115,14 @@ Be polite to free public APIs. Do not scrape FlightRadar24 or FlightAware.
 Anyone who runs it uses **their own computer** and hits **public free feeds** (IEM, RainViewer, Blitzortung, adsb.lol) from **their own IP**. Running a copy does not create usage charges for the author.
 
 Optional Cash App tips are only if you choose to help with his costs — the map stays free either way.
+
+## Trust & security
+
+- Runs **locally** in your browser / on your LAN (`127.0.0.1`)
+- Uses **public** weather and ADS-B feeds from **your** IP — no publisher API keys
+- Does **not** scrape FlightRadar24 or FlightAware
+- See [SECURITY.md](SECURITY.md) for the policy and how to report vulnerabilities privately
+- Prefer this GitHub repo (or Releases) as the download source
 
 ## Optional support
 
