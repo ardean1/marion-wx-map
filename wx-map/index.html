@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070b14">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Marion Wx Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="map" role="application" aria-label="Weather and aircraft map"></div>
+
+  <div id="hud">
+    <header class="hud-head">
+      <div>
+        <h1>Marion Wx</h1>
+        <p class="sub">Smyth County, VA</p>
+      </div>
+      <button type="button" id="btn-fold" class="icon-btn" aria-expanded="true" aria-controls="hud-body" title="Collapse panel">▾</button>
+    </header>
+
+    <div id="hud-body">
+      <fieldset class="layers">
+        <legend>Layers</legend>
+        <label><input type="checkbox" id="ly-radar" checked> Radar</label>
+        <label><input type="checkbox" id="ly-storms" checked> Storms</label>
+        <label><input type="checkbox" id="ly-lightning" checked> Lightning</label>
+        <label><input type="checkbox" id="ly-planes" checked> Planes</label>
+      </fieldset>
+
+      <div class="radar-ctl" id="radar-ctl">
+        <button type="button" id="btn-play" class="icon-btn" title="Play or pause radar loop">❚❚</button>
+        <input type="range" id="radar-slider" min="0" max="11" value="11" aria-label="Radar frame">
+        <span id="radar-time">—</span>
+      </div>
+
+      <button type="button" id="btn-marion" class="primary">Recenter Marion</button>
+
+      <ul id="status" class="status" aria-live="polite"></ul>
+      <p class="note" id="storm-note">Storm circles: NWS cells, merged when several radars see the same one. Weak leftover tracks (under 40 dBZ) are hidden. Arrows are 20 minutes of motion toward where the cell is headed.</p>
+      <p class="credits">
+        Radar: IEM NEXRAD · Storms: IEM · Lightning: Blitzortung.org ·
+        Planes: adsb.lol via start.bat at http://127.0.0.1:8765 · Map: Esri
+      </p>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>
