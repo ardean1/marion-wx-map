@@ -14,18 +14,85 @@
 
 Live map for **Marion, VA / Smyth County**: NEXRAD radar, NWS storm cells with real motion, Blitzortung lightning, and ADS-B aircraft. No Raspberry Pi, no RTL-SDR, no FlightRadar24 / FlightAware scraping.
 
-## Important — how to run (read this)
+## Windows — download, run, and close (start here)
 
-1. **Start the local server** with `wx-map/start.bat` (Windows) or `python3 serve.py` / `serve.ps1` from the `wx-map` folder.
-2. **Keep the Command Prompt / terminal window open** while you use the map. Closing that window stops the local server; the page will stop loading layers correctly (especially **Planes**).
-3. To use the map again later, **run the start file again** to re-launch the local server that serves the web content.
-4. Then open **http://127.0.0.1:8765** in your browser (the start script usually opens it for you).
+### 1. Download
+1. Open the GitHub page in your browser.
+2. Click the green **Code** button.
+3. Click **Download ZIP**.
+4. Save the ZIP somewhere easy, like your **Desktop** or **Downloads**.
 
-Radar / storms / lightning can also open from `wx-map/index.html` alone; **planes need** the local server (CORS proxy for adsb.lol).
+### 2. Extract and keep the folder
+1. Right-click the ZIP → **Extract All...** (or open it and drag the inner folder out).
+2. Put the extracted folder somewhere permanent, for example your Desktop:
+   - Desktop\marion-wx-map
+3. Open that folder until you see the **wx-map** folder inside (with `start.bat`).
 
-### Aircraft trails
+### 3. Launch
+1. Open the **wx-map** folder.
+2. Double-click **start.bat**.
+3. A black **Command Prompt** window opens — **leave it open**.
+4. Your browser should open http://127.0.0.1:8765 (if not, paste that address yourself).
 
-**Refreshing the browser page clears all aircraft trails.** Trails only build while the page stays open and the Planes layer is running. Keep the tab open if you want history on the map.
+You do **not** need Python on Windows. You do **not** need admin rights for a normal home PC.
+
+### 4. Close properly
+1. Close the **browser tab** for the map (optional but tidy).
+2. Click the **Command Prompt** window that is running the map.
+3. Press **Ctrl+C**, or click the **X** on that window.
+4. That stops the local server. To use the map again later, double-click **start.bat** again.
+
+**Tips:** Refreshing the browser page clears aircraft trails. If planes fail, make sure the Command Prompt is still open and you are on http://127.0.0.1:8765 (not a file:// page).
+
+
+## What you can click (drill-down)
+
+Turn a layer on in the left panel, then **click a marker** on the map. A popup opens with live fields from that feed (nothing invented). Radar tiles themselves are not clickable for cell detail — use the **Storms** layer for that.
+
+### Aircraft (Planes)
+Click a plane icon (callsign sits under the arrow). You get:
+
+| Field | Meaning |
+|-------|---------|
+| **Callsign** | Flight ID / ATC callsign when broadcast (e.g. `AAL123`). If missing, the ADS-B hex id is shown instead. |
+| **Alt** | Barometric (or geometric) altitude, or **ground** if the aircraft reports on the ground. |
+| **Speed** | Ground speed when available. |
+| **Heading** | Track / true heading in degrees. |
+| **Hex** | Mode S / ADS-B ICAO address (24-bit hex). |
+| **Type** | Aircraft type code or description when the feed provides it; **registration / tail number** appears after `·` when the feed includes it (field `r` from adsb.lol). |
+
+On-map label already shows callsign, altitude, and speed. Colored trails follow each aircraft; **refresh the page** to clear trails.
+
+### Storm cells (Storms)
+Click a colored storm circle (or its motion arrow). Cells below ~40 dBZ are hidden unless they carry TVS/MESO. Nearby duplicate tracks from multiple radars are merged. Popup shows:
+
+| Field | Meaning |
+|-------|---------|
+| **Storm id · radars** | NWS storm attribute id and which NEXRAD site(s) reported it (e.g. FCX, GSP). |
+| **Max dBZ** | Peak reflectivity in the cell (marker color scales with this). |
+| **Top** | Echo top height in thousands of feet (kft). |
+| **VIL** | Vertically Integrated Liquid (storm intensity / water content proxy). |
+| **Motion toward** | Direction the cell is moving **toward** (degrees) and speed in knots. Arrow on the map is ~20 minutes of that motion. |
+| **Hail POH · size** | Probability of Hail (%) and estimated max hail size (inches) from the attributes feed. |
+| **TVS / MESO** | Tornado Vortex Signature and Mesocyclone flags (`NONE` when clear). Thicker ring on the marker when TVS is present. |
+| **Valid** | Timestamp of the attribute product. |
+
+### Lightning
+Click a strike dot. You get:
+
+- Local time of the strike (**America/New_York**)
+- Approximate lat / lon (3 decimal places)
+- Credit line: Blitzortung.org
+
+Strikes are kept for roughly the last **8 minutes** in the current map view.
+
+### Home pin
+Click the Marion marker: **Marion, VA · Smyth County**.
+
+### Not a drill-down
+- **Radar** imagery is a looping tile layer (IEM NEXRAD, RainViewer fallback). Pan/zoom and play/pause the loop; there is no per-pixel storm popup on the radar alone.
+- Layer toggles, **Recenter Marion**, and fold controls are UI only.
+
 
 ## Data sources (radar, aircraft, and more)
 
