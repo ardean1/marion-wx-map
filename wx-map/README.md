@@ -58,6 +58,55 @@ Opening `index.html` as a `file://` page also works for those three layers.
 
 **Recenter Marion** jumps back to 36.8344, −81.5148 at zoom 9.
 
+## What you can click (drill-down)
+
+Turn a layer on in the left panel, then **click a marker** on the map. A popup opens with live fields from that feed (nothing invented). Radar tiles themselves are not clickable for cell detail — use the **Storms** layer for that.
+
+### Aircraft (Planes)
+Click a plane icon (callsign sits under the arrow). You get:
+
+| Field | Meaning |
+|-------|---------|
+| **Callsign** | Flight ID / ATC callsign when broadcast (e.g. `AAL123`). If missing, the ADS-B hex id is shown instead. |
+| **Alt** | Barometric (or geometric) altitude, or **ground** if the aircraft reports on the ground. |
+| **Speed** | Ground speed when available. |
+| **Heading** | Track / true heading in degrees. |
+| **Hex** | Mode S / ADS-B ICAO address (24-bit hex). |
+| **Type** | Aircraft type code or description when the feed provides it; **registration / tail number** appears after `·` when the feed includes it (field `r` from adsb.lol). |
+
+On-map label already shows callsign, altitude, and speed. Colored trails follow each aircraft; **refresh the page** to clear trails.
+
+### Storm cells (Storms)
+Click a colored storm circle (or its motion arrow). Cells below ~40 dBZ are hidden unless they carry TVS/MESO. Nearby duplicate tracks from multiple radars are merged. Popup shows:
+
+| Field | Meaning |
+|-------|---------|
+| **Storm id · radars** | NWS storm attribute id and which NEXRAD site(s) reported it (e.g. FCX, GSP). |
+| **Max dBZ** | Peak reflectivity in the cell (marker color scales with this). |
+| **Top** | Echo top height in thousands of feet (kft). |
+| **VIL** | Vertically Integrated Liquid (storm intensity / water content proxy). |
+| **Motion toward** | Direction the cell is moving **toward** (degrees) and speed in knots. Arrow on the map is ~20 minutes of that motion. |
+| **Hail POH · size** | Probability of Hail (%) and estimated max hail size (inches) from the attributes feed. |
+| **TVS / MESO** | Tornado Vortex Signature and Mesocyclone flags (`NONE` when clear). Thicker ring on the marker when TVS is present. |
+| **Valid** | Timestamp of the attribute product. |
+
+### Lightning
+Click a strike dot. You get:
+
+- Local time of the strike (**America/New_York**)
+- Approximate lat / lon (3 decimal places)
+- Credit line: Blitzortung.org
+
+Strikes are kept for roughly the last **8 minutes** in the current map view.
+
+### Home pin
+Click the Marion marker: **Marion, VA · Smyth County**.
+
+### Not a drill-down
+- **Radar** imagery is a looping tile layer (IEM NEXRAD, RainViewer fallback). Pan/zoom and play/pause the loop; there is no per-pixel storm popup on the radar alone.
+- Layer toggles, **Recenter Marion**, and fold controls are UI only.
+
+
 ## APIs curl-tested (2026-08-28)
 
 These were fetched from the build environment before the UI was wired:
