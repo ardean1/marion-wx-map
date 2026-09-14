@@ -20,6 +20,10 @@ It should open http://127.0.0.1:8765 in your browser. Planes need this step.
 Radar / storms / lightning also work if you just double-click `index.html`.
 Planes will error until you use `start.bat`.
 
+### Android APK (sideload)
+
+The repo root wraps this folder with **Capacitor** (`webDir: wx-map`). See [../ANDROID.md](../ANDROID.md) and the root README **Android (sideload APK)** section. On device, planes call adsb.lol over HTTPS (no `start.bat` proxy). Windows flow above is unchanged.
+
 ### Linux / Mac (or Windows if you already have Python)
 
 **Recommended** (needed for the Planes layer — `adsb.lol` does not send CORS

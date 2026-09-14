@@ -690,13 +690,67 @@
     return Math.min(250, Math.max(50, Math.ceil(m / 1852)));
   }
 
-  function planesNeedLocalServer() {
-    return location.protocol === "file:" || !/^https?:$/.test(location.protocol) ||
-      (location.hostname !== "127.0.0.1" && location.hostname !== "localhost");
+  function isNativeCapacitor() {
+    try {
+      const Cap = window.Capacitor;
+      return !!(Cap && typeof Cap.isNativePlatform === "function" && Cap.isNativePlatform());
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function isLocalDesktopServer() {
+    const host = location.hostname;
+    return (
+      (location.protocol === "http:" || location.protocol === "https:") &&
+      (host === "127.0.0.1" || host === "localhost")
+    );
+  }
+
+  async function fetchJson(url) {
+    // On Capacitor, CapacitorHttp (enabled in capacitor.config) patches fetch so
+    // HTTPS calls to adsb.lol bypass WebView CORS. Desktop still uses /proxy/adsb.
+    const CapHttp =
+      (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.CapacitorHttp) ||
+      null;
+    if (isNativeCapacitor() && CapHttp && typeof CapHttp.request === "function") {
+      const resp = await CapHttp.request({
+        url,
+        method: "GET",
+        headers: { Accept: "application/json", "User-Agent": "MarionWxMap/1.0" },
+      });
+      const status = resp.status;
+      let data = resp.data;
+      if (typeof data === "string") {
+        try {
+          data = JSON.parse(data);
+        } catch (_) {
+          /* leave as string */
+        }
+      }
+      return { ok: status >= 200 && status < 300, status, data };
+    }
+    const res = await fetch(url, {
+      cache: "no-store",
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) return { ok: false, status: res.status, data: null };
+    return { ok: true, status: res.status, data: await res.json() };
   }
 
   async function fetchAdsB(lat, lon, dist) {
-    if (planesNeedLocalServer()) {
+    const directUrl = `${ADSB_DIRECT}/${lat.toFixed(4)}/${lon.toFixed(4)}/${dist}`;
+
+    // Android / iOS Capacitor WebView: no local Python proxy — call adsb.lol over HTTPS.
+    if (isNativeCapacitor()) {
+      const { ok, status, data } = await fetchJson(directUrl);
+      if (!ok) throw new Error(`adsb.lol HTTP ${status}`);
+      if (data && data.error) throw new Error(data.error);
+      return { data, via: "adsb.lol (Capacitor)" };
+    }
+
+    // Windows / desktop browser: require start.bat local proxy (CORS workaround).
+    if (!isLocalDesktopServer() || location.protocol === "file:") {
       throw new Error("open via start.bat (address must be http://127.0.0.1:8765)");
     }
     try {
@@ -706,29 +760,17 @@
       throw new Error("start.bat is not serving. Close extra windows, run start.bat, use http://127.0.0.1:8765");
     }
     const qs = `lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&dist=${dist}`;
-    const urls = [
-      `/proxy/adsb?${qs}`,
-    ];
-    let lastErr = "no response";
-    for (const url of urls) {
-      try {
-        const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) {
-          lastErr = `HTTP ${res.status}`;
-          continue;
-        }
-        const data = await res.json();
-        if (data && data.error) {
-          lastErr = data.error;
-          continue;
-        }
-        const src = (data && data._source) || (url.startsWith("/proxy") ? "adsb.lol via local proxy" : "adsb.lol");
-        return { data, via: src };
-      } catch (err) {
-        lastErr = err.message || String(err);
-      }
+    const url = `/proxy/adsb?${qs}`;
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (data && data.error) throw new Error(data.error);
+      const src = (data && data._source) || "adsb.lol via local proxy";
+      return { data, via: src };
+    } catch (err) {
+      throw new Error(err.message || String(err));
     }
-    throw new Error(lastErr);
   }
 
   function normalizeAircraft(data) {
@@ -825,7 +867,9 @@
         setStatus(
           "planes",
           "err",
-          "Planes: use start.bat and http://127.0.0.1:8765 (not a file:// page)."
+          isNativeCapacitor()
+            ? "Planes: network/ADS-B request failed on device."
+            : "Planes: use start.bat and http://127.0.0.1:8765 (not a file:// page)."
         );
       } else {
         setStatus(
