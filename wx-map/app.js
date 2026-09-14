@@ -954,4 +954,19 @@
     $("btn-fold").textContent = folded ? "▸" : "▾";
     $("btn-fold").setAttribute("aria-expanded", folded ? "false" : "true");
   });
+
+  const tipBtn = $("btn-tip");
+  if (tipBtn) {
+    tipBtn.addEventListener("click", () => {
+      const url = "https://cash.app/$AnthonyDean16";
+      try {
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
+          window.Capacitor.Plugins.Browser.open({ url });
+          return;
+        }
+      } catch (e) {}
+      window.open(url, "_blank", "noopener,noreferrer");
+    });
+  }
+
 })();
