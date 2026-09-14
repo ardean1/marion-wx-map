@@ -1,0 +1,55 @@
+name: Android debug APK
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "wx-map/**"
+      - "android/**"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - ".github/workflows/android-apk.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install SDK packages
+        run: |
+          sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          yes | sdkmanager --licenses >/dev/null || true
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Capacitor sync
+        run: npx cap sync android
+      - name: Assemble debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+      - name: Stage APK
+        run: |
+          mkdir -p dist
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist/MarionWxMap-debug.apk
+          ls -lh dist/MarionWxMap-debug.apk
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MarionWxMap-debug
+          path: dist/MarionWxMap-debug.apk
+          if-no-files-found: error
