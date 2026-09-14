@@ -12,6 +12,8 @@ Short howto for the Capacitor debug APK. Windows users: keep using `wx-map/start
 
 Debug/test only — not Play Store. Map feeds are public; nothing is uploaded to Ardean.
 
+Play Store (donation-only) drafts: see `play-store/` (`LISTING.md`, `PRIVACY.md`, `CONSOLE-CHECKLIST.md`).
+
 ## Rebuild locally (Linux/macOS with Android SDK)
 
 ```bash
