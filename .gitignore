@@ -1,0 +1,21 @@
+# Dependencies / local SDK (never commit the Android SDK tree)
+node_modules/
+
+# Built APKs (CI uploads artifacts; local copies stay out of git)
+dist/*.apk
+*.apk
+!dist/README.txt
+
+# Android local / build outputs (source under android/ is committed)
+android/.gradle/
+android/app/build/
+android/build/
+android/capacitor-cordova-android-plugins/build/
+android/local.properties
+android/captures/
+android/*.iml
+android/.idea/
+android/app/release/
+.idea/
+*.log
+.DS_Store

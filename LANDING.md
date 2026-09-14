@@ -51,6 +51,21 @@ You do **not** need Python on Windows. You do **not** need admin rights for a no
 
 **Tips:** Aircraft trails erase when planes leave the map view (or after pan/zoom). Use the **ZIP** box to recenter on a US ZIP; **Recenter Marion** jumps home. If planes fail, make sure the Command Prompt is still open and you are on http://127.0.0.1:8765 (not a file:// page).
 
+## Android (sideload APK)
+
+Not on the Play Store yet — this is a **debug/test** Capacitor build. Your data stays on-device; the map uses the same public free feeds as Windows.
+
+**Download (phone Chrome):**  
+https://github.com/ardean1/marion-wx-map/releases/download/android-debug-2026-09-13/MarionWxMap-debug.apk
+
+SHA-256: `44febd5881376cb11d9b34c1f0cff655547d5be1033080fbc27ac719f4457dd3`
+
+1. Open that link on your phone → download the APK (use the browser, not an in-app viewer that only offers Share).
+2. Open the file → allow **Install unknown apps** / install from that source (Chrome or Files) if asked → **Install**.
+3. Brand-specific menus differ (Samsung, Pixel, Motorola, etc.): search Google/YouTube for `sideload APK` + your phone brand + model.
+4. Optional transparency: upload the same APK to [VirusTotal](https://www.virustotal.com/) yourself. A clean scan is **not** a proof of “vulnerability-free” — it only shows what many AV engines reported.
+5. More detail / rebuild: [ANDROID.md](ANDROID.md). Also: GitHub Actions workflow **Android debug APK**, or Releases page.
+
 
 ## What you can click (drill-down)
 
@@ -108,7 +123,7 @@ Click the Marion marker: **Marion, VA · Smyth County**.
 | **Radar** | [Iowa Environmental Mesonet (IEM)](https://mesonet.agron.iastate.edu/ogc/) NEXRAD TMS (`nexrad-n0q` loop); [RainViewer](https://www.rainviewer.com/) fallback tiles |
 | **Storms** | IEM [NWS storm attributes](https://mesonet.agron.iastate.edu/geojson/nexrad_attr.py) (real `drct` / `sknt` motion) |
 | **Lightning** | [Blitzortung.org](https://www.blitzortung.org/) community websocket (credit contributors; non-commercial use of their data) |
-| **Aircraft (ADS-B)** | [adsb.lol](https://api.adsb.lol/docs) via local `/proxy/adsb`; OpenSky is a server-side fallback only |
+| **Aircraft (ADS-B)** | [adsb.lol](https://api.adsb.lol/docs) via local `/proxy/adsb` on Windows; direct HTTPS (CapacitorHttp) on Android; OpenSky is a server-side fallback on desktop only |
 | **Basemap** | Esri Canvas Dark Gray |
 
 Be polite to free public APIs. Do not scrape FlightRadar24 or FlightAware.
@@ -123,7 +138,7 @@ Optional Cash App tips are only if you choose to help with his costs — the map
 
 ## Trust & security
 
-- Runs **locally** in your browser / on your LAN (`127.0.0.1`)
+- Runs **locally** in your browser / on your LAN (`127.0.0.1`), or as a sideloaded Android APK
 - Uses **public** weather and ADS-B feeds from **your** IP — no publisher API keys
 - Does **not** scrape FlightRadar24 or FlightAware
 - See [SECURITY.md](SECURITY.md) for the policy and how to report vulnerabilities privately
