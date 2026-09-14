@@ -38,6 +38,12 @@
         <span id="radar-time">—</span>
       </div>
 
+      <div class="zip-row">
+        <label for="zip-input">ZIP</label>
+        <input type="text" id="zip-input" maxlength="5" inputmode="numeric" pattern="[0-9]{5}" placeholder="24354" autocomplete="postal-code" aria-label="5-digit ZIP code">
+        <button type="button" id="btn-zip" class="icon-btn" title="Go to ZIP">Go</button>
+      </div>
+
       <button type="button" id="btn-marion" class="primary">Recenter Marion</button>
 
       <ul id="status" class="status" aria-live="polite"></ul>

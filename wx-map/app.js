@@ -587,8 +587,13 @@
   }
 
   function pushTrail(id, lat, lon, color) {
-    let tr = planeTrails.get(id);
+    const bounds = map.getBounds();
     const pt = [lat, lon];
+    if (!bounds.contains(pt)) {
+      dropTrail(id);
+      return;
+    }
+    let tr = planeTrails.get(id);
     if (!tr) {
       const line = L.polyline([pt], {
         color,
@@ -601,9 +606,11 @@
       planeTrails.set(id, tr);
       return;
     }
-    const last = tr.pts[tr.pts.length - 1];
-    const moved = map.distance(last, pt);
-    if (moved < 40) {
+    tr.pts = tr.pts.filter((p) => bounds.contains(p));
+    const last = tr.pts.length ? tr.pts[tr.pts.length - 1] : null;
+    const moved = last ? map.distance(last, pt) : 999;
+    if (last && moved < 40) {
+      tr.line.setLatLngs(tr.pts);
       tr.line.setStyle({ color });
       return;
     }
@@ -618,6 +625,30 @@
     if (!tr) return;
     trailGroup.removeLayer(tr.line);
     planeTrails.delete(id);
+  }
+
+  function clipTrailsToBounds() {
+    const bounds = map.getBounds();
+    for (const id of [...planeTrails.keys()]) {
+      const tr = planeTrails.get(id);
+      if (!tr) continue;
+      const mk = planeMarkers.get(id);
+      const planeOnMap = !!(mk && bounds.contains(mk.getLatLng()));
+      tr.pts = tr.pts.filter((pt) => bounds.contains(pt));
+      if (!planeOnMap) {
+        dropTrail(id);
+        continue;
+      }
+      if (tr.pts.length < 2) {
+        if (tr.pts.length === 0) {
+          dropTrail(id);
+        } else {
+          tr.line.setLatLngs(tr.pts);
+        }
+        continue;
+      }
+      tr.line.setLatLngs(tr.pts);
+    }
   }
 
   function clearPlanes() {
@@ -817,8 +848,62 @@
   setInterval(loadPlanes, 12 * 1000);
 
   /* ---------- UX ---------- */
+  map.on("moveend zoomend", () => {
+    clipTrailsToBounds();
+  });
+
+  async function goZip() {
+    const raw = ($("zip-input").value || "").trim();
+    if (!/^\d{5}$/.test(raw)) {
+      setStatus("zip", "err", "Enter a 5-digit ZIP");
+      return;
+    }
+    try {
+      const res = await fetch(`https://api.zippopotam.us/us/${raw}`, { cache: "no-store" });
+      if (!res.ok) {
+        setStatus("zip", "err", "ZIP not found");
+        return;
+      }
+      const data = await res.json();
+      const place = data && Array.isArray(data.places) ? data.places[0] : null;
+      if (!place) {
+        setStatus("zip", "err", "ZIP not found");
+        return;
+      }
+      const lat = Number(place.latitude);
+      const lon = Number(place.longitude);
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+        setStatus("zip", "err", "ZIP not found");
+        return;
+      }
+      const z = map.getZoom();
+      const zoom = z >= 7 && z <= 14 ? z : DEFAULT_ZOOM;
+      map.setView([lat, lon], zoom);
+      const name = place["place name"] || raw;
+      const st = place["state abbreviation"] || "";
+      setStatus(
+        "zip",
+        "ok",
+        `Centered on ${raw} · ${name}${st ? ", " + st : ""}`
+      );
+    } catch (_) {
+      setStatus("zip", "err", "ZIP not found");
+    }
+  }
+
+  $("btn-zip").addEventListener("click", () => {
+    goZip();
+  });
+  $("zip-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      goZip();
+    }
+  });
+
   $("btn-marion").addEventListener("click", () => {
     map.setView([MARION.lat, MARION.lon], DEFAULT_ZOOM);
+    setStatus("zip", "ok", "Centered on Marion, VA");
   });
   $("btn-fold").addEventListener("click", () => {
     const folded = $("hud").classList.toggle("folded");

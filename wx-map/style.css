@@ -107,6 +107,46 @@ h1 {
   margin: 6px 0 8px;
 }
 
+.zip-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 8px;
+}
+
+.zip-row label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.zip-row input {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  padding: 0 10px;
+  font: inherit;
+  letter-spacing: 0.06em;
+}
+
+.zip-row input::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+  letter-spacing: 0;
+}
+
+.zip-row .icon-btn {
+  flex-shrink: 0;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .radar-ctl input[type="range"] {
   flex: 1;
   accent-color: var(--accent);

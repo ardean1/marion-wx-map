@@ -58,6 +58,10 @@ Opening `index.html` as a `file://` page also works for those three layers.
 
 **Recenter Marion** jumps back to 36.8344, −81.5148 at zoom 9.
 
+**ZIP** box (5 digits + Go / Enter) pans the map to that US ZIP via [Zippopotam.us](https://api.zippopotam.us/) — Marion home pin stays put. Invalid or unknown ZIPs show an error in the status list; nothing is invented.
+
+Aircraft **trails clear** when a plane leaves the viewable map (or its track points fall outside the current bounds after pan/zoom). Trails also drop when the plane disappears from the ADS-B feed.
+
 ## What you can click (drill-down)
 
 Turn a layer on in the left panel, then **click a marker** on the map. A popup opens with live fields from that feed (nothing invented). Radar tiles themselves are not clickable for cell detail — use the **Storms** layer for that.
@@ -74,7 +78,7 @@ Click a plane icon (callsign sits under the arrow). You get:
 | **Hex** | Mode S / ADS-B ICAO address (24-bit hex). |
 | **Type** | Aircraft type code or description when the feed provides it; **registration / tail number** appears after `·` when the feed includes it (field `r` from adsb.lol). |
 
-On-map label already shows callsign, altitude, and speed. Colored trails follow each aircraft; **refresh the page** to clear trails.
+On-map label already shows callsign, altitude, and speed. Colored trails follow each aircraft while they stay in view; trails erase when a plane leaves the map bounds (or after pan/zoom clips old points). Refresh the page to clear everything.
 
 ### Storm cells (Storms)
 Click a colored storm circle (or its motion arrow). Cells below ~40 dBZ are hidden unless they carry TVS/MESO. Nearby duplicate tracks from multiple radars are merged. Popup shows:
@@ -104,7 +108,7 @@ Click the Marion marker: **Marion, VA · Smyth County**.
 
 ### Not a drill-down
 - **Radar** imagery is a looping tile layer (IEM NEXRAD, RainViewer fallback). Pan/zoom and play/pause the loop; there is no per-pixel storm popup on the radar alone.
-- Layer toggles, **Recenter Marion**, and fold controls are UI only.
+- Layer toggles, **ZIP** recenter, **Recenter Marion**, and fold controls are UI only.
 
 
 ## APIs curl-tested (2026-08-28)
