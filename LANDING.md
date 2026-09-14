@@ -12,6 +12,14 @@
 
 <p align="center"><img src="docs/logo.png" alt="Marion Wx Map logo" width="220"></p>
 
+<p align="center">
+  <img src="docs/screenshots/windows-browser.png" alt="Marion Wx Map running in a Windows browser — radar, storms, planes, ZIP recenter" width="900">
+</p>
+
+<p align="center"><em>Windows browser sample (local <code>start.bat</code> → http://127.0.0.1:8765)</em></p>
+
+
+
 **Free for everyone to use.** Optional donations help cover Ardean’s costs (hosting, time, tools) — this is not a paid product and not a commercial weather service.
 
 Live map for **Marion, VA / Smyth County**: NEXRAD radar, NWS storm cells with real motion, Blitzortung lightning, and ADS-B aircraft. No Raspberry Pi, no RTL-SDR, no FlightRadar24 / FlightAware scraping.
